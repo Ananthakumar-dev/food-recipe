@@ -8,6 +8,7 @@ export default function ReceipeState({ children }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [receipes, setReceipes] = useState([]);
+  const [favourites, setFavourites] = useState([]);
 
   async function handleGetReceipes(e) {
     e.preventDefault();
@@ -18,7 +19,6 @@ export default function ReceipeState({ children }) {
       const fetchRecipes = await fetch(url);
       const recipeData = await fetchRecipes.json();
 
-      console.log(recipeData);
       if (
         recipeData.status &&
         recipeData.data &&
@@ -39,7 +39,16 @@ export default function ReceipeState({ children }) {
 
   return (
     <ReceipeContext.Provider
-      value={{ search, setSearch, loading, error, receipes, handleGetReceipes }}
+      value={{
+        search,
+        setSearch,
+        loading,
+        error,
+        receipes,
+        handleGetReceipes,
+        favourites,
+        setFavourites,
+      }}
     >
       {children}
     </ReceipeContext.Provider>

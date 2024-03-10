@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import NavBar from "../../components/navBar";
 import { useParams } from "react-router";
+import { ReceipeContext } from "../../context/receipeContext";
 
 export default function Detail() {
   const params = useParams();
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(false);
+  const { favourites, setFavourites } = useContext(ReceipeContext);
 
   async function fetchReceipeDetail() {
     setLoading(true);
@@ -14,11 +16,23 @@ export default function Detail() {
     const fetchDetail = await fetch(url);
     const detailResult = await fetchDetail.json();
 
-    console.log(detailResult);
     if (detailResult.status) {
       setDetail(detailResult.data.recipe);
     }
     setLoading(false);
+  }
+
+  function handleAddFavourites(detail) {
+    const copyFav = [...favourites];
+
+    const index = copyFav.findIndex((fav) => fav.id === detail.id);
+    if (index === -1) {
+      copyFav.push(detail);
+    } else {
+      copyFav.splice(index);
+    }
+
+    setFavourites(copyFav);
   }
 
   useEffect(() => {
@@ -48,26 +62,34 @@ export default function Detail() {
               </div>
 
               <div className="add_to_favourites">
-                <button type="button" className="btn">
-                  Add to Favourites
+                <button
+                  type="button"
+                  className="btn"
+                  onClick={() => handleAddFavourites(detail)}
+                >
+                  {favourites.findIndex((fav) => fav.id === detail.id) === -1
+                    ? "Add to Favourites"
+                    : "Remove from Favourites"}
                 </button>
               </div>
 
-              <div className="ingredients">
+              <div className="ingredients-section">
                 <h4>Ingredients</h4>
-                {detail.ingredients.length
-                  ? detail.ingredients.map((ingredient, key) => {
-                      return (
-                        <p key={key}>
-                          <span>
-                            {ingredient.quantity} {ingredient.unit}
-                          </span>
+                <ul>
+                  {detail.ingredients.length
+                    ? detail.ingredients.map((ingredient, key) => {
+                        return (
+                          <li key={key}>
+                            <span>
+                              {ingredient.quantity} {ingredient.unit}
+                            </span>
 
-                          <span>{ingredient.description}</span>
-                        </p>
-                      );
-                    })
-                  : null}
+                            <span>{ingredient.description}</span>
+                          </li>
+                        );
+                      })
+                    : null}
+                </ul>
               </div>
             </div>
           </div>

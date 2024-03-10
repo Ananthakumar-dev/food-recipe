@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import { FaMagnifyingGlass, FaMoon, FaRegSun } from "react-icons/fa6";
 import UseLocalStorage from "../hooks/useLocalStorage";
 import { ReceipeContext } from "../context/receipeContext";
@@ -7,6 +7,13 @@ import { ReceipeContext } from "../context/receipeContext";
 export default function NavBar() {
   const [, setTheme] = UseLocalStorage("theme", "dark");
   const { search, setSearch, handleGetReceipes } = useContext(ReceipeContext);
+
+  const Navigate = useNavigate();
+
+  function handleSubmit(e) {
+    handleGetReceipes(e);
+    Navigate("/");
+  }
 
   return (
     <header className="header">
@@ -28,7 +35,7 @@ export default function NavBar() {
             <button
               className="btn form-btn"
               type="submit"
-              onClick={handleGetReceipes}
+              onClick={handleSubmit}
             >
               <FaMagnifyingGlass className="search-icon" />
             </button>
@@ -54,10 +61,14 @@ export default function NavBar() {
           </div>
           <ul className="right-menu">
             <li>
-              <Link to={"/"}>Home</Link>
+              <NavLink to={"/"} className="nav-link">
+                Home
+              </NavLink>
             </li>
             <li>
-              <Link to={"/favourites"}>Favourites</Link>
+              <NavLink to={"/favourites"} className="nav-link">
+                Favourites
+              </NavLink>
             </li>
           </ul>
         </div>
